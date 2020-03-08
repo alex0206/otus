@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/beevik/ntp"
 	"os"
 	"time"
+
+	"github.com/beevik/ntp"
 )
+
+const errorExitCode = 1
 
 func main() {
 	printLocalTime()
@@ -21,7 +24,7 @@ func printNtpTime() {
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		os.Exit(errorExitCode)
 	}
 
 	fmt.Println("exact time:", ntpTime)
