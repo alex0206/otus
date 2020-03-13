@@ -14,23 +14,23 @@ func Unpack(str string) (string, error) {
 		return "", nil
 	}
 
-	_, err := strconv.Atoi(str)
-	if err == nil {
-		return "", ErrInvalidString
-	}
-
 	symbolCnt := make(map[rune]int)
 	var builder strings.Builder
 	var lastRune rune
 
 	for _, symbol := range str {
-		symbolCnt[symbol]++
+		isDigit := unicode.IsDigit(symbol)
 
+		if lastRune == 0 && isDigit {
+			return "", ErrInvalidString
+		}
+
+		symbolCnt[symbol]++
 		if symbolCnt[symbol] > 1 {
 			return "", ErrInvalidString
 		}
 
-		if unicode.IsDigit(symbol) {
+		if isDigit {
 			repeatNumber, _ := strconv.Atoi(string(symbol))
 			builder.WriteString(strings.Repeat(string(lastRune), repeatNumber-1))
 		} else {
