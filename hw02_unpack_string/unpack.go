@@ -14,6 +14,7 @@ func Unpack(str string) (string, error) {
 		return "", nil
 	}
 
+	const maxSymbolCnt = 1
 	symbolCnt := make(map[rune]int)
 	var builder strings.Builder
 	var lastRune rune
@@ -26,13 +27,14 @@ func Unpack(str string) (string, error) {
 		}
 
 		symbolCnt[symbol]++
-		if symbolCnt[symbol] > 1 {
+		if symbolCnt[symbol] > maxSymbolCnt {
 			return "", ErrInvalidString
 		}
 
 		if isDigit {
 			repeatNumber, _ := strconv.Atoi(string(symbol))
-			builder.WriteString(strings.Repeat(string(lastRune), repeatNumber-1))
+			repeatNumber--
+			builder.WriteString(strings.Repeat(string(lastRune), repeatNumber))
 		} else {
 			builder.WriteRune(symbol)
 		}
