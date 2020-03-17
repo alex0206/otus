@@ -20,8 +20,7 @@ func Unpack(str string) (string, error) {
 			}
 
 			repeatNumber, _ := strconv.Atoi(string(symbol))
-			repeatNumber--
-			builder.WriteString(strings.Repeat(string(lastRune), repeatNumber))
+			builder.WriteString(strings.Repeat(string(lastRune), repeatNumber-1)) //nolint:gomnd
 		} else {
 			builder.WriteRune(symbol)
 		}
