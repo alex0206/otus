@@ -2,11 +2,32 @@ package hw02_unpack_string //nolint:golint,stylecheck
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+	"unicode"
 )
 
 var ErrInvalidString = errors.New("invalid string")
 
-func Unpack(_ string) (string, error) {
-	// Place your code here
-	return "", nil
+func Unpack(str string) (string, error) {
+	var builder strings.Builder
+	var lastRune rune
+
+	for _, symbol := range str {
+		if unicode.IsDigit(symbol) {
+			if lastRune == 0 || unicode.IsDigit(lastRune) {
+				return "", ErrInvalidString
+			}
+
+			repeatNumber, _ := strconv.Atoi(string(symbol))
+			repeatNumber--
+			builder.WriteString(strings.Repeat(string(lastRune), repeatNumber))
+		} else {
+			builder.WriteRune(symbol)
+		}
+
+		lastRune = symbol
+	}
+
+	return builder.String(), nil
 }
