@@ -57,4 +57,15 @@ func TestTop10(t *testing.T) {
 			assert.ElementsMatch(t, expected, Top10(text))
 		}
 	})
+
+	t.Run("text with less then 10 words", func(t *testing.T) {
+		expected := []string{"cat", "and", "dog,", "one", "two", "cats"}
+		assert.ElementsMatch(t, expected, Top10("cat and dog, one dog, two cats"))
+
+		expected = []string{"Don't", "communicate", "by", "sharing", "memory"}
+		assert.ElementsMatch(t, expected, Top10("Don't communicate by sharing memory"))
+
+		expected = []string{"word"}
+		assert.ElementsMatch(t, expected, Top10("word"))
+	})
 }
