@@ -2,38 +2,36 @@ package hw03_frequency_analysis //nolint:golint,stylecheck
 
 import (
 	"bufio"
-	"log"
 	"sort"
 	"strings"
 )
+
+const topWordsNumber = 10
 
 type word struct {
 	name string
 	cnt  int
 }
 
-func Top10(text string) []string {
+func Top10(text string) ([]string, error) {
 	wordCntMap, err := wordCntAnalize(text)
-
 	if err != nil {
-		log.Fatalln(err.Error())
+		return nil, err
 	}
 
 	words := sortWords(wordCntMap)
 
-	topWordSize := 10
-
+	topWordSize := topWordsNumber
 	if wordsLen := len(words); wordsLen < topWordSize {
 		topWordSize = wordsLen
 	}
 
 	topWords := make([]string, 0, topWordSize)
-
 	for i := 0; i < topWordSize; i++ {
 		topWords = append(topWords, words[i].name)
 	}
 
-	return topWords
+	return topWords, nil
 }
 
 func sortWords(wordCntMap map[string]int) []word {
