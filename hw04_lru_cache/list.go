@@ -19,62 +19,95 @@ type listItem struct {
 type list struct {
 	front *listItem
 	back  *listItem
-	cnt   int
+	size  int
 }
 
-func (l list) Len() int {
-	return l.cnt
+func (l *list) Len() int {
+	return l.size
 }
 
-func (l list) Front() *listItem {
+func (l *list) Front() *listItem {
 	return l.front
 }
 
-func (l list) Back() *listItem {
+func (l *list) Back() *listItem {
 	return l.back
 }
 
-func (l list) PushFront(v interface{}) *listItem {
+func (l *list) PushFront(v interface{}) *listItem {
 	l.front = &listItem{
 		Value: v,
-		Next:  l.Front(),
-		Prev:  nil,
+		Next:  nil,
+		Prev:  l.Front(),
 	}
-	l.cnt++
+
+	if l.front.Prev != nil {
+		l.front.Prev.Next = l.front
+	} else {
+		l.back = l.front
+	}
+
+	l.size++
 
 	return l.front
 }
 
-func (l list) PushBack(v interface{}) *listItem {
+func (l *list) PushBack(v interface{}) *listItem {
 	l.back = &listItem{
 		Value: v,
-		Next:  nil,
-		Prev:  l.Back(),
+		Next:  l.Back(),
+		Prev:  nil,
 	}
-	l.cnt++
+	if l.back.Next != nil {
+		l.back.Next.Prev = l.back
+	} else {
+		l.front = l.back
+	}
+
+	l.size++
 
 	return l.back
 }
 
-func (l list) Remove(i *listItem) {
-	i.Prev.Next = i.Next
-	if i.Next != nil {
-		i.Next.Prev = i.Prev
+func (l *list) Remove(i *listItem) {
+	if l.size == 1 {
+		l.front = nil
+		l.back = nil
+	} else {
+		if l.size == 2 {
+			if l.front == i {
+				l.front = l.back
+			} else {
+				l.back = l.front
+			}
+		} else {
+			removeLinksForNode(i)
+		}
 	}
-	i = nil
-	l.cnt--
+
+	l.size--
 }
 
-func (l list) MoveToFront(i *listItem) {
-	i.Prev.Next = i.Next
-	if i.Next != nil {
-		i.Next.Prev = i.Prev
-	}
+func (l *list) MoveToFront(i *listItem) {
+	if l.front != i {
+		if i == l.back {
+			l.back = i.Next
+		}
+		removeLinksForNode(i)
 
-	l.front.Prev = i
-	i.Prev = nil
-	i.Next = l.front
-	l.front = i
+		tmp := l.front
+		tmp.Next = i
+		l.front = i
+		l.front.Next = nil
+		l.front.Prev = tmp
+	}
+}
+
+func removeLinksForNode(i *listItem) {
+	i.Next.Prev = i.Prev
+	if i.Prev != nil {
+		i.Prev.Next = i.Next
+	}
 }
 
 func NewList() List {
